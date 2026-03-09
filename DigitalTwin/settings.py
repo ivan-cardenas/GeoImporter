@@ -81,11 +81,15 @@ INSTALLED_APPS = [
     "django_extensions",
     # "rest_framework",
     "crispy_forms",
-    "crispy_tailwind",    
-    'core.apps.CoreConfig',    
-    "importer",  
+    "crispy_tailwind",
+    
+    'core.apps.CoreConfig',
+    
+    "importer",
+    
+    
     "common",
-    "watersupply",    
+    "watersupply",
     "mainMap",
     
 ]
@@ -100,7 +104,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "DigitalTwin.urls"
+ROOT_URLCONF = "digitaltwin.urls"
 
 TEMPLATES = [
     {
@@ -121,7 +125,7 @@ TEMPLATES[0]['OPTIONS']['context_processors'] += [
     'common.version.version_context',
 ]
 
-WSGI_APPLICATION = "DigitalTwin.wsgi.application"
+WSGI_APPLICATION = "digitaltwin.wsgi.application"
 
 
 # Database
