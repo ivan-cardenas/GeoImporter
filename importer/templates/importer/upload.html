@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="space-y-8">
+    <!-- Header Section -->
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div class="space-y-2">
+            <p class="text-[11px] uppercase tracking-[0.28em] text-cyan-100/80">Data Import</p>
+            <h1 class="text-2xl md:text-3xl font-semibold text-slate-50">Upload Geodata</h1>
+            <p class="text-slate-300 max-w-2xl">Bring your shapefiles, GeoJSON, or other spatial assets to fuel simulations and cross-sector planning.</p>
+        </div>
+        <div class="hidden sm:flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-sm text-slate-200">
+            <span class="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.65)]"></span>
+            <span>Secure upload channel</span>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="space-y-2">
+        {% for m in messages %}
+        <div class="flex items-start gap-3 rounded-xl border border-cyan-500/35 bg-cyan-500/10 px-4 py-3 text-cyan-50">
+            <span class="mt-1 h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_10px_rgba(94,234,212,0.6)]"></span>
+            <p>{{ m }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Form Errors -->
+    {% if form.errors %}
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <strong>Please correct the following errors:</strong>
+        <ul class="list-disc list-inside mt-2">
+            {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                    <li>{{ field }}: {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- Upload Form -->
+    <form method="post" enctype="multipart/form-data" class="upload-form space-y-6">
+        {% csrf_token %}
+        
+        <div class="grid gap-6 md:grid-cols-2">
+            <!-- File Upload Field -->
+            <div class="space-y-2">
+                <label class="text-sm font-medium text-slate-100">{{ form.file.label }}</label>
+                <div class="file-upload-wrapper">
+                    {{ form.file }}
+                </div>
+                {% if form.file.help_text %}
+                <span class="helptext">{{ form.file.help_text }}</span>
+                {% endif %}
+                {% if form.file.errors %}
+                <ul class="errorlist">
+                    {% for error in form.file.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+
+            <!-- Target Model Selection - Cascading Dropdowns -->
+            <!-- App Selection -->
+            <div class="space-y-1.5">
+                <label class="text-sm font-medium text-slate-100">Sector</label>
+                <select id="app-select" class="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-slate-100 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500">
+                    <option value="">— Select Sector —</option>
+                </select>
+            </div>
+
+            <!-- Target Model Selection -->
+            <div class="space-y-1.5">
+                <label class="text-sm font-medium text-slate-100">Target Model</label>
+                <select name="target_model" id="model-select" class="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-slate-100 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500" disabled>
+                    <option value="">— Select Sector First —</option>
+                </select>
+            </div>
+
+            <!-- Load external JS -->
+            <script src="{% static 'js/model_selector.js' %}"></script>
+
+            <!-- Initialize with data from Django -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const modelsByApp = {
+                        {% for app_name, models in grouped_models %}
+                        "{{ app_name }}": [
+                            {% for value, display_name in models %}
+                            { value: "{{ value }}", label: "{{ display_name }}" }{% if not forloop.last %},{% endif %}
+                            {% endfor %}
+                        ]{% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                    };
+                    
+                    initModelSelector(modelsByApp);
+                });
+            </script>
+        </div>
+
+        <!-- Non-field errors -->
+        {% if form.non_field_errors %}
+        <ul class="errorlist">
+            {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <!-- Submit Section -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-white/10">
+            <p class="text-sm text-slate-400">Files stay private to this workspace. You can review details before publishing to others.</p>
+            <button type="submit" class="btn-primary">
+                <span>Continue</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                </svg>
+            </button>
+        </div>
+    </form>
+
+    <!-- Help Section -->
+    <div class="glass rounded-xl p-5 space-y-3">
+        <h3 class="text-sm font-semibold text-slate-100 flex items-center gap-2">
+            <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Supported Formats
+        </h3>
+        <div class="grid gap-3 sm:grid-cols-4 text-sm">
+            <div class="flex items-center gap-2 text-slate-300">
+                <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+                <span>GeoJSON (.geojson, .json)</span>
+            </div>
+            <div class="flex items-center gap-2 text-slate-300">
+                <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+                <span>Shapefile (.zip)</span>
+            </div>
+            <div class="flex items-center gap-2 text-slate-300">
+                <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+                <span>Shapefile (.shp + .dbf + .shx)</span>
+            </div>
+            <div class="flex items-center gap-2 text-slate-300">
+                <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+                <span>Raster File (.tif, .tiff)</span>
+            </div>
+        </div>
+    </div>
+    <a href="{% url 'map:map'%}" class="btn-secondary">
+           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"></path>
+            </svg>
+            <span>Back to Map</span>
+    </a>
+</div>
+{% endblock content %}
