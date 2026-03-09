@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use this software in your research, please cite it as below."
+type: software
+title: "FROM PLANNING QUESTION TO SPATIAL DATABASE: A GEOSPATIAL DATA IMPORTER FOR URBAN DIGITAL TWINS"
+authors:
+  - family-names: "Cardenas-Leon"
+    given-names: "Ivan"
+    affiliation: "University of Twente"
+    orcid: "0009-0005-0245-633X"
+version: "1.0.0"
+date-released: "2026-03-09"
+license: "CC-BY-NC-SA-4.0"
+repository-code: "https://github.com/ivan-cardenas/GeoImporter/"
+keywords:
+  - urban digital twin
+  - geospatial data ingestion
+  - spatial database
+  - PostGIS
+  - GeoDjango
+  - directed acyclic graph
+  - urban planning
+  - data interoperability
+preferred-citation:
+  type: conference-paper
+  title: "From Planning Question to Spatial Database: A Geospatial Data Importer for Urban Digital Twins"
+  authors:
+    - family-names: "Cardenas-Leon"
+      given-names: "Ivan"
+      affiliation: "University of Twente"
+  collection-title: "ISPRS — International Archives of the Photogrammetry, Remote Sensing and Spatial Information Sciences"
+  year: 2026
+  url: ""
